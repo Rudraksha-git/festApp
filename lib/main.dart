@@ -7,7 +7,7 @@ import 'logic/bloc/event/event_event.dart';
 import 'logic/cubit/theme_cubit.dart';
 import 'logic/bloc/notice/notice_bloc.dart';
 import 'logic/bloc/notice/notice_event.dart';
-import 'presentation/screens/home/homescreen.dart';
+import 'presentation/router/app_router.dart';
 
 void main() {
   // No Firebase initialization here so the app can run
@@ -22,9 +22,7 @@ class FestApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ThemeCubit>(
-          create: (_) => ThemeCubit(),
-        ),
+        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
         BlocProvider<EventBloc>(
           // For now, run without Firestore/Firebase – this uses
           // the in-memory branch in EventBloc and immediately
@@ -46,11 +44,13 @@ class FestApp extends StatelessWidget {
             theme: AppTheme.light(),
             darkTheme: ThemeData.dark(),
             themeMode: mode,
-            home: const StudentHomeScreen(),
+            // start the app on the role selection page and use the
+            // router helpers for navigation through login/signup/home.
+            initialRoute: AppRouter.roleSelection,
+            onGenerateRoute: AppRouter.generateRoute,
           );
         },
       ),
     );
   }
 }
-
