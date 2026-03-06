@@ -7,6 +7,7 @@ import '../../../core/utils/button.dart';
 import '../../../data/models/event_model.dart';
 import '../../../logic/bloc/event/event_bloc.dart';
 import '../../../logic/bloc/event/event_state.dart';
+import '../../../presentation/router/app_router.dart';
 import '../student/upcoming_events_page.dart';
 
 class StudentHomeScreen extends StatelessWidget {
@@ -213,7 +214,7 @@ class StudentHomeScreen extends StatelessWidget {
           text: 'See All',
           variant: AppButtonVariant.text,
           size: AppButtonSize.small,
-          onPressed: () {},
+          onPressed: () => AppRouter.navigateToUpcomingEvents(context),
         ),
       ],
     );
@@ -538,13 +539,7 @@ class _StudentBottomNavBar extends StatelessWidget {
           _NavItem(
             icon: Icons.calendar_month,
             label: 'Upcoming',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => UpcomingEventsPage(events: events),
-                ),
-              );
-            },
+            onTap: () => AppRouter.navigateToUpcomingEvents(context),
           ),
           const _NavItem(icon: Icons.info_outline, label: 'About Us'),
           const _NavItem(icon: Icons.notifications_none, label: 'Notice'),

@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/event_model.dart';
+import '../../../logic/bloc/event/event_bloc.dart';
+import '../../../logic/bloc/event/event_state.dart';
 
 class UpcomingEventsPage extends StatefulWidget {
-  const UpcomingEventsPage({
-    super.key,
-    required this.events,
-  });
-
-  /// All events loaded from Firestore or a repository.
-  /// This page will locally filter them to show only upcoming ones.
-  final List<EventModel> events;
+  const UpcomingEventsPage({super.key});
 
   @override
   State<UpcomingEventsPage> createState() => _UpcomingEventsPageState();
@@ -33,14 +29,13 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
   String? _selectedClub; // null = All clubs
   String? _selectedCategory; // null = All categories (sports / cultural)
 
-  List<EventModel> get _upcomingEvents {
+  List<EventModel> _getFilteredEvents(List<EventModel> events) {
     final now = DateTime.now();
 
-    final filtered = widget.events.where((event) {
+    final filtered = events.where((event) {
       final status = event.status.trim().toLowerCase();
       final isUpcomingStatus = status == 'upcoming';
-      final isFutureDate =
-          event.startAt == null || event.startAt!.isAfter(now);
+      final isFutureDate = event.startAt == null || event.startAt!.isAfter(now);
       final isUpcoming = isUpcomingStatus || isFutureDate;
 
       final eventClub = event.club.trim().toLowerCase();
@@ -48,7 +43,8 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
           _selectedClub == null || eventClub == _selectedClub!.toLowerCase();
 
       final category = event.category.trim().toLowerCase();
-      final matchesCategory = _selectedCategory == null ||
+      final matchesCategory =
+          _selectedCategory == null ||
           category == _selectedCategory!.toLowerCase();
 
       return isUpcoming && matchesClub && matchesCategory;
@@ -67,36 +63,38 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Upcoming Events'),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
-          _buildClubFilterRow(theme),
-          const SizedBox(height: 8),
-          _buildCategoryFilterRow(theme),
-          const Divider(height: 1),
-          Expanded(
-            child: _upcomingEvents.isEmpty
-                ? const Center(
-                    child: Text('No upcoming events found.'),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    itemCount: _upcomingEvents.length,
-                    itemBuilder: (context, index) {
-                      final event = _upcomingEvents[index];
-                      return _EventCard(event: event);
-                    },
-                  ),
+    return BlocBuilder<EventBloc, EventState>(
+      builder: (context, state) {
+        final events = state is EventLoaded ? state.events : <EventModel>[];
+
+        return Scaffold(
+          appBar: AppBar(title: const Text('Upcoming Events')),
+          body: Column(
+            children: [
+              const SizedBox(height: 8),
+              _buildClubFilterRow(theme),
+              const SizedBox(height: 8),
+              _buildCategoryFilterRow(theme),
+              const Divider(height: 1),
+              Expanded(
+                child: _getFilteredEvents(events).isEmpty
+                    ? const Center(child: Text('No upcoming events found.'))
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        itemCount: _getFilteredEvents(events).length,
+                        itemBuilder: (context, index) {
+                          final event = _getFilteredEvents(events)[index];
+                          return _EventCard(event: event);
+                        },
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -125,7 +123,8 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
               child: ChoiceChip(
                 label: Text(_capitalizeWords(club)),
                 selected:
-                    _selectedClub != null && _selectedClub == club.toLowerCase(),
+                    _selectedClub != null &&
+                    _selectedClub == club.toLowerCase(),
                 onSelected: (_) {
                   setState(() {
                     _selectedClub = club.toLowerCase();
@@ -144,10 +143,7 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
         children: [
-          Text(
-            'Category:',
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text('Category:', style: theme.textTheme.bodyMedium),
           const SizedBox(width: 8),
           ChoiceChip(
             label: const Text('All'),
@@ -189,7 +185,8 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
         .where((part) => part.isNotEmpty)
         .map(
           (part) =>
-              part[0].toUpperCase() + (part.length > 1 ? part.substring(1) : ''),
+              part[0].toUpperCase() +
+              (part.length > 1 ? part.substring(1) : ''),
         )
         .join(' ');
   }
@@ -208,9 +205,7 @@ class _EventCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -249,15 +244,9 @@ class _EventCard extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(
-                    Icons.access_time,
-                    size: 16,
-                  ),
+                  const Icon(Icons.access_time, size: 16),
                   const SizedBox(width: 4),
-                  Text(
-                    dateText,
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(dateText, style: theme.textTheme.bodySmall),
                 ],
               ),
             ],
@@ -300,4 +289,3 @@ class _EventCard extends StatelessWidget {
     return value[0].toUpperCase() + value.substring(1).toLowerCase();
   }
 }
-
