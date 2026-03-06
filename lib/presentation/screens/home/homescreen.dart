@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/utils/button.dart';
 import '../../../data/models/event_model.dart';
 import '../../../logic/bloc/event/event_bloc.dart';
 import '../../../logic/bloc/event/event_state.dart';
+import '../student/upcoming_events_page.dart';
 
 class StudentHomeScreen extends StatelessWidget {
   const StudentHomeScreen({super.key});
@@ -40,9 +42,7 @@ class StudentHomeScreen extends StatelessWidget {
                         const SizedBox(height: 32),
                         _buildUpcomingHeader(context),
                         const SizedBox(height: 16),
-                        const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        const Center(child: CircularProgressIndicator()),
                       ],
                     );
                   }
@@ -80,10 +80,7 @@ class StudentHomeScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         const Text(
                           'No events yet. Stay tuned!',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
                         ),
                       ],
                     );
@@ -166,7 +163,12 @@ class StudentHomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const _StudentBottomNavBar(),
+      bottomNavigationBar: BlocBuilder<EventBloc, EventState>(
+        builder: (context, state) {
+          final events = state is EventLoaded ? state.events : <EventModel>[];
+          return _StudentBottomNavBar(events: events);
+        },
+      ),
     );
   }
 
@@ -189,10 +191,7 @@ class StudentHomeScreen extends StatelessWidget {
             shape: BoxShape.circle,
             color: Color(0xFF1E293B),
           ),
-          child: const Icon(
-            Icons.person_outline,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.person_outline, color: Colors.white),
         ),
       ],
     );
@@ -210,21 +209,11 @@ class StudentHomeScreen extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        TextButton(
+        AppButton(
+          text: 'See All',
+          variant: AppButtonVariant.text,
+          size: AppButtonSize.small,
           onPressed: () {},
-          style: TextButton.styleFrom(
-            foregroundColor: AppColors.secondary,
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(0, 0),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: const Text(
-            'See All',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
         ),
       ],
     );
@@ -266,10 +255,7 @@ class _LiveEventHero extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF6366F1),
-            Color(0xFF3B82F6),
-          ],
+          colors: [Color(0xFF6366F1), Color(0xFF3B82F6)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -284,7 +270,7 @@ class _LiveEventHero extends StatelessWidget {
               height: 180,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
               ),
             ),
           ),
@@ -296,7 +282,7 @@ class _LiveEventHero extends StatelessWidget {
               height: 160,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.08),
+                color: Colors.white.withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -312,22 +298,18 @@ class _LiveEventHero extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: pillBackground.withOpacity(0.7),
+                      color: pillBackground.withValues(alpha: 0.7),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
-                        Icon(
-                          Icons.circle,
-                          size: 8,
-                          color: Colors.redAccent,
-                        ),
+                        Icon(Icons.circle, size: 8, color: AppColors.redAlert),
                         SizedBox(width: 6),
                         Text(
                           'LIVE NOW',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.surface,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.8,
@@ -340,7 +322,7 @@ class _LiveEventHero extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     fontSize: 26,
                     fontWeight: FontWeight.w700,
                   ),
@@ -349,32 +331,17 @@ class _LiveEventHero extends StatelessWidget {
                 if (subtitle.isNotEmpty)
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
                   ),
                 const Spacer(),
-                SizedBox(
+                AppButton(
+                  text: 'Join',
+                  variant: AppButtonVariant.secondary,
+                  size: AppButtonSize.medium,
                   width: 120,
-                  height: 44,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
-                    ),
-                    onPressed: isLoading ? null : () {},
-                    child: const Text(
-                      'Join',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  isDisabled: isLoading,
+                  onPressed: isLoading ? null : () {},
                 ),
               ],
             ),
@@ -429,10 +396,10 @@ class _UpcomingEventCard extends StatelessWidget {
 
   factory _UpcomingEventCard.fromEvent(EventModel event) {
     final DateTime? date = event.startAt;
-    final String day =
-    date != null ? date.day.toString().padLeft(2, '0') : '--';
-    final String month =
-    date != null ? _monthAbbreviation(date.month) : '--';
+    final String day = date != null
+        ? date.day.toString().padLeft(2, '0')
+        : '--';
+    final String month = date != null ? _monthAbbreviation(date.month) : '--';
 
     String time;
     if (date != null) {
@@ -443,8 +410,9 @@ class _UpcomingEventCard extends StatelessWidget {
       time = 'Time TBD';
     }
 
-    final String location =
-    event.category.isNotEmpty ? event.category : 'Campus';
+    final String location = event.category.isNotEmpty
+        ? event.category
+        : 'Campus';
 
     return _UpcomingEventCard(
       day: day,
@@ -530,18 +498,12 @@ class _UpcomingEventCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   location,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   time,
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
                 ),
               ],
             ),
@@ -553,37 +515,39 @@ class _UpcomingEventCard extends StatelessWidget {
 }
 
 class _StudentBottomNavBar extends StatelessWidget {
-  const _StudentBottomNavBar();
+  const _StudentBottomNavBar({required this.events});
+
+  final List<EventModel> events;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: const BoxDecoration(
         color: Color(0xFF020617),
-        border: Border(
-          top: BorderSide(
-            color: Color(0xFF1E293B),
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: Color(0xFF1E293B), width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          _NavItem(
+        children: [
+          const _NavItem(
             icon: Icons.home_filled,
             label: 'Home',
             isActive: true,
           ),
           _NavItem(
-            icon: Icons.info_outline,
-            label: 'About Us',
+            icon: Icons.calendar_month,
+            label: 'Upcoming',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => UpcomingEventsPage(events: events),
+                ),
+              );
+            },
           ),
-          _NavItem(
-            icon: Icons.notifications_none,
-            label: 'Notice',
-          ),
+          const _NavItem(icon: Icons.info_outline, label: 'About Us'),
+          const _NavItem(icon: Icons.notifications_none, label: 'Notice'),
         ],
       ),
     );
@@ -594,29 +558,39 @@ class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isActive;
+  final VoidCallback? onTap;
 
   const _NavItem({
     required this.icon,
     required this.label,
     this.isActive = false,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final color = isActive ? Colors.white : Colors.white54;
-    return Column(
+    final color = isActive ? AppColors.surface : Colors.white54;
+    final content = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: color),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: color,
-            fontSize: 11,
-          ),
-        ),
+        Text(label, style: TextStyle(color: color, fontSize: 11)),
       ],
+    );
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: content,
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: content,
     );
   }
 }
