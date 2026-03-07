@@ -10,6 +10,8 @@ import 'logic/bloc/event/event_event.dart';
 import 'logic/cubit/theme_cubit.dart';
 import 'logic/bloc/notice/notice_bloc.dart';
 import 'logic/bloc/notice/notice_event.dart';
+import 'logic/bloc/coordinator/coordinator_bloc.dart';
+import 'logic/bloc/coordinator/coordinator_event.dart';
 import 'presentation/router/app_router.dart';
 
 // Make main asynchronous to allow Firebase to initialize
@@ -44,6 +46,10 @@ class FestApp extends StatelessWidget {
           // Same here, change to true when ready for real Firestore data.
           create: (_) =>
               NoticeBloc(useRepository: false)..add(const FetchNotices()),
+        ),
+        BlocProvider<CoordinatorBloc>(
+          create: (_) =>
+              CoordinatorBloc(useRepository: true)..add(const FetchCoordinators()),
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
