@@ -5,21 +5,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'firebase_options.dart';
 
+// Core & Services
 import 'core/theme/app_theme.dart';
+import 'services/cloudinary_service.dart';
+
+// Blocs & Cubits
 import 'logic/bloc/auth/auth_bloc.dart';
 import 'logic/bloc/auth/auth_event.dart';
 import 'logic/bloc/event/event_bloc.dart';
 import 'logic/bloc/event/event_event.dart';
 import 'logic/bloc/notice/notice_bloc.dart';
 import 'logic/bloc/notice/notice_event.dart';
+import 'logic/bloc/admin/admin_bloc.dart'; // Added AdminBloc import
 import 'logic/cubit/theme_cubit.dart';
+
+// Router
 import 'presentation/router/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Load Cloudinary credentials from .env
   await dotenv.load(fileName: ".env");
 
+  // Initialize Firebase with generated options
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -47,6 +56,12 @@ class FestApp extends StatelessWidget {
         BlocProvider<NoticeBloc>(
           create: (_) =>
           NoticeBloc(useRepository: false)..add(const FetchNotices()),
+        ),
+        // Providing AdminBloc globally fixes the ProviderNotFoundException
+        BlocProvider<AdminBloc>(
+          create: (_) => AdminBloc(
+            cloudinaryService: CloudinaryService(),
+          ),
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
