@@ -201,7 +201,7 @@ class StudentHomeScreen extends StatelessWidget {
               _MessageSection(
                 imagePath: 'assets/images/Directorimage1.jpeg',
                 title: 'Message from the Director’s Desk',
-                designation: 'Dr. PK Jain, Director, NIT Patna',
+                designation: 'Dr. P.K. Jain, Director, NIT Patna',
                 message:
                     'At our institute, we believe that true education extends beyond classrooms. Cultural, sports, and literary activities play a vital role in shaping confident, creative, and responsible individuals. The Student Activity Centre app is a step towards encouraging students to explore their talents, participate actively, and grow through diverse learning experiences.',
                 backgroundColor: cardBackground,
@@ -211,14 +211,18 @@ class StudentHomeScreen extends StatelessWidget {
               _MessageSection(
                 imagePath: 'assets/images/DSW image1.jpeg',
                 title: 'Message from Fest President',
-                designation: 'Dr. Prabhat Kumar, Dean Student Welfare',
+                designation: 'Dr. Prabhat Kumar, Dean Student Welfare, NIT Patna',
                 message:
                     'It gives me great pleasure to see the Student Activity Centre App becoming an integral part of our fest. The app has enabled seamless event updates and registrations, making participation easier for everyone. It reflects our commitment to creating an organized, engaging, and vibrant platform for students to celebrate talent and teamwork.',
                 backgroundColor: cardBackground,
                 pillBackground: pillBackground,
               ),
               const SizedBox(height: 32),
-
+              _StudentCoordinatorsSection(
+                backgroundColor: cardBackground,
+                pillBackground: pillBackground,
+              ),
+              const SizedBox(height: 32),
             ],
           ),
         ),
@@ -620,6 +624,135 @@ class _MessageSection extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _StudentCoordinatorsSection extends StatelessWidget {
+  final Color backgroundColor;
+  final Color pillBackground;
+
+  const _StudentCoordinatorsSection({
+    required this.backgroundColor,
+    required this.pillBackground,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: pillBackground, width: 1),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: pillBackground,
+                ),
+                child: const Icon(Icons.people_alt_outlined, color: Colors.white, size: 24),
+              ),
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Text(
+                  'Student Coordinators',
+                  style: TextStyle(
+                    color: AppColors.surface,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildCoordinatorRow(
+            name: 'Manaswini Patil',
+            phone: '8275007608',
+            email: 'patilr.ug22.ar@nitp.ac.in',
+            pillBackground: pillBackground,
+          ),
+          const SizedBox(height: 16),
+          const Divider(color: Colors.white12, height: 1),
+          const SizedBox(height: 16),
+          _buildCoordinatorRow(
+            name: 'Harshvardhan Dansena',
+            phone: '8319728292',
+            email: 'harshvardhand.dd22.ce@nitp.ac.in',
+            pillBackground: pillBackground,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCoordinatorRow({
+    required String name,
+    required String phone,
+    required String email,
+    required Color pillBackground,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: pillBackground,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(Icons.person, color: Colors.white70, size: 20),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  color: AppColors.surface,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  const Icon(Icons.phone_outlined, color: Colors.white54, size: 14),
+                  const SizedBox(width: 6),
+                  Text(
+                    phone,
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.email_outlined, color: Colors.white54, size: 14),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      email,
+                      style: const TextStyle(color: Colors.white70, fontSize: 13),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
