@@ -158,7 +158,10 @@ class TeamDataProvider {
       'email': 'vasuc.ug23.cs@nitp.ac.in',
       'phone': '8600550839',
     },
-    'Shivam Kumar': {'email': 'shivamk.dd24.cs@nitp.ac.in', 'phone': ''},
+    'Shivam Kumar': {
+      'email': 'shivamk.dd24.cs@nitp.ac.in',
+      'phone': '',
+    },
     'Palak Jaiswal': {
       'email': 'palakj.ug23.cs@nitp.ac.in',
       'phone': '9450081431',
@@ -166,6 +169,30 @@ class TeamDataProvider {
     'Nandani Awase': {
       'email': 'nandania.ug23.cs@nitp.ac.in',
       'phone': '6260248296',
+    },
+    'Aryan Binani': {
+      'email': 'aryanb.ug24.cs@nitp.ac.in',
+      'phone': '',
+    },
+    'Ayush Bhardwaj': {
+      'email': 'ayushb.ug24.cs@nitp.ac.in',
+      // 'phone': '',
+    },
+    'Rudraksha Kumar': {
+      'email': 'rudrakshak.ug24.mae@nitp.ac.in',
+      // 'phone': '',
+    },
+    'Shreya Mourya': {
+      'email': 'shreyam.ug24.cs@nitp.ac.in',
+      // 'phone': '',
+    },
+    'Supriya Kumari': {
+      'email': 'supriyak.ug24.cs@nitp.ac.in',
+      // 'phone': '',
+    },
+    'Tanishq Kumar Prasad': {
+      'email': 'tanishqp.ug24.ec@nitp.ac.in',
+      // 'phone': '',
     },
   };
 
@@ -597,6 +624,49 @@ class TeamDataProvider {
       email: _getEmail('Shivam Kumar'),
       phone: _getPhone('Shivam Kumar'),
     ),
+    //HackSlash
+    TeamMember(
+      team: 'App Developer',
+      role: 'HackSlash',
+      name: 'Aryan Binani',
+      email: _getEmail('Aryan Binani'),
+      // phone: _getPhone('Aryan Binani'),
+    ),
+    TeamMember(
+      team: 'App Developer',
+      role: 'HackSlash',
+      name: 'Ayush Bhardwaj',
+      email: _getEmail('Ayush Bhardwaj'),
+      // phone: _getPhone('Ayush Bhardwaj'),
+    ),
+    TeamMember(
+      team: 'App Developer',
+      role: 'HackSlash',
+      name: 'Rudraksha Kumar',
+      email: _getEmail('Rudraksha Kumar'),
+      // phone: _getPhone('Rudraksha Kumar'),
+    ),
+    TeamMember(
+      team: 'App Developer',
+      role: 'HackSlash',
+      name: 'Shreya Mourya',
+      email: _getEmail('Shreya Mourya'),
+      // phone: _getPhone('Shreya Mourya'),
+    ),
+    TeamMember(
+      team: 'App Developer',
+      role: 'HackSlash',
+      name: 'Supriya Kumari',
+      email: _getEmail('Supriya Kumari'),
+      // phone: _getPhone('Supriya Kumari'),
+    ),TeamMember(
+      team: 'App Developer',
+      role: 'HackSlash',
+      name: 'Tanishq Kumar Prasad',
+      email: _getEmail('Tanishq Kumar Prasad'),
+      // phone: _getPhone('Tanishq Kumar Prasad'),
+    ),
+
   ];
 
   static String? _getEmail(String name) {
@@ -610,7 +680,7 @@ class TeamDataProvider {
   static Map<String, List<TeamMember>> getTeamMembersGroupedByTeam() {
     final Map<String, List<TeamMember>> grouped = {};
     for (final member in allTeamMembers) {
-      if (member.email != null && member.phone != null) {
+      if (member.email != null) {
         grouped.putIfAbsent(member.team, () => []).add(member);
       }
     }

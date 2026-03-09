@@ -39,7 +39,7 @@ class AboutUsPage extends StatelessWidget {
                     name: member.name,
                     role: member.role,
                     email: member.email!,
-                    phone: member.phone!,
+                    phone: member.phone,
                   );
                 }),
                 const Divider(height: 32),
