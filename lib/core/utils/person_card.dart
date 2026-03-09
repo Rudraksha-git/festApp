@@ -7,14 +7,14 @@ class PersonCard extends StatelessWidget {
   final String name;
   final String role;
   final String email;
-  final String phone;
+  final String? phone;
 
   const PersonCard({
     super.key,
     required this.name,
     required this.role,
     required this.email,
-    required this.phone,
+    this.phone,
   });
 
   Future<void> _launchEmail() async {
@@ -36,6 +36,7 @@ class PersonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasPhone = phone != null && phone!.trim().isNotEmpty;
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -91,19 +92,21 @@ class PersonCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 4),
-            GestureDetector(
-              onTap: _launchPhone,
-              child: Text(
-                'Phone: $phone',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+            if(hasPhone)...[
+              const SizedBox(height: 4),
+              GestureDetector(
+                onTap: _launchPhone,
+                child: Text(
+                  'Phone: $phone',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ]
         ),
       ),
     );
